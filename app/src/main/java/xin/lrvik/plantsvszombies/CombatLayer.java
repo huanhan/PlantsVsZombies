@@ -3,6 +3,7 @@ package xin.lrvik.plantsvszombies;
 import android.view.MotionEvent;
 
 import org.cocos2d.actions.CCScheduler;
+import org.cocos2d.actions.base.CCFiniteTimeAction;
 import org.cocos2d.actions.base.CCRepeatForever;
 import org.cocos2d.actions.instant.CCCallFunc;
 import org.cocos2d.actions.interval.CCAnimate;
@@ -27,6 +28,7 @@ import org.cocos2d.types.CGRect;
 import org.cocos2d.types.CGSize;
 import org.cocos2d.types.ccColor3B;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
@@ -70,6 +72,7 @@ public class CombatLayer extends CCLayer {
     private int currentSunNumber = 50;
     private ArrayList<Sun> suns;
     private Sun sun;
+    private CCLabel ccLabel1ZombiesBatch;
 
 
     public CombatLayer() {
@@ -426,29 +429,38 @@ public class CombatLayer extends CCLayer {
         suns = new ArrayList<>();
         update();
 
-        CCDelayTime ccDelayTime1 = CCDelayTime.action(20);
+        CCDelayTime ccDelayTime1 = CCDelayTime.action(15);
         CCCallFunc ccCallFunc1 = CCCallFunc.action(this, "startAddZombie1");
-        CCDelayTime ccDelayTime2 = CCDelayTime.action(40);
+        CCDelayTime ccDelayTime2 = CCDelayTime.action(70);
         CCCallFunc ccCallFunc2 = CCCallFunc.action(this, "startAddZombie2");
-        CCDelayTime ccDelayTime3 = CCDelayTime.action(60);
+        CCDelayTime ccDelayTime3 = CCDelayTime.action(150);
         CCCallFunc ccCallFunc3 = CCCallFunc.action(this, "startAddZombie3");
 
         //天上落下阳光 20秒下一次
-        CCScheduler.sharedScheduler().schedule("createSkySun",this,20,false);
+        CCScheduler.sharedScheduler().schedule("createSkySun", this, 20, false);
 
         CCSequence ccSequence = CCSequence.actions(ccDelayTime1, ccCallFunc1, ccDelayTime2, ccCallFunc2, ccDelayTime3, ccCallFunc3);
         runAction(ccSequence);
 
+
+        ccLabel1ZombiesBatch = CCLabel.makeLabel("第  0/3  拨僵尸", "", 20);
+        ccLabel1ZombiesBatch.setPosition(ccp(winSize.getWidth() - 100, 50));
+        ccLabel1ZombiesBatch.setColor(ccColor3B.ccRED);
+        addChild(ccLabel1ZombiesBatch);
     }
 
-    public void createSkySun(float t){
+    private void setZombiesBatch(int batch) {
+        ccLabel1ZombiesBatch.setString("第  " + batch + "/3  拨僵尸");
+    }
+
+    public void createSkySun(float t) {
         sun = new Sun();
         int randomInt = random.nextInt(100);
         //设置位置在最顶部
-        sun.setPosition(winSize.getWidth()/2+randomInt,winSize.getHeight()-100);
+        sun.setPosition(winSize.getWidth() / 2 + randomInt, winSize.getHeight() - 100);
         addChild(sun);
         addSun(sun);
-        CCJumpTo ccJumpTo = CCJumpTo.action(1f, ccp(winSize.getWidth() / 2-randomInt, winSize.getHeight() / 3), 100, 2);
+        CCJumpTo ccJumpTo = CCJumpTo.action(1f, ccp(winSize.getWidth() / 2 - randomInt, winSize.getHeight() / 3), 100, 2);
         //5秒后自动消失
         CCDelayTime ccDelayTime = CCDelayTime.action(5);
         CCCallFunc removeSun = CCCallFunc.action(this, "removeSun");
@@ -456,23 +468,40 @@ public class CombatLayer extends CCLayer {
         sun.runAction(ccSequence);
     }
 
-    public void removeSun(){
+    public void removeSun() {
         removeSun(sun);
         sun.removeSelf();
     }
 
     public void startAddZombie1() {
-        CCScheduler.sharedScheduler().schedule("addZombie", this, 20, false);
+        setZombiesBatch(1);
+        addZombiesByNum(15,5f);
     }
 
+
     public void startAddZombie2() {
-        CCScheduler.sharedScheduler().schedule("addZombie", this, 10, false);
+        setZombiesBatch(2);
+//        CCScheduler.sharedScheduler().schedule("addZombie", this, 10, false);
+        addZombiesByNum(30,3f);
     }
 
     public void startAddZombie3() {
-        CCScheduler.sharedScheduler().schedule("addZombie", this, 50, false);
+        setZombiesBatch(3);
+//        CCScheduler.sharedScheduler().schedule("addZombie", this, 50, false);
+        addZombiesByNum(60,1f);
     }
 
+    //根据数量增加僵尸
+    private void addZombiesByNum(int num,float delay) {
+        //CCScheduler.sharedScheduler().schedule("addZombie", this, 20, false);
+        CCFiniteTimeAction[] cCFiniteTimeActions = new CCFiniteTimeAction[num*2];
+        for (int i = 0; i < num*2; i += 2) {
+            cCFiniteTimeActions[i] = CCDelayTime.action(delay);
+            cCFiniteTimeActions[i + 1] = CCCallFunc.action(this, "addZombie");
+        }
+        CCSequence ccSequence = CCSequence.actions(CCDelayTime.action(1F),cCFiniteTimeActions);
+        runAction(ccSequence);
+    }
 
     private void update() {
         for (PlantCard plantCard : selectPlantCards) {
@@ -512,7 +541,7 @@ public class CombatLayer extends CCLayer {
 
     }
 
-    public void addZombie(float t) {
+    public void addZombie() {
         int i = random.nextInt(5);
         Zombie zombie = new Zombie(this, cgPoints_path.get(2 * i), cgPoints_path.get(2 * i + 1));
         cctmxTiledMap.addChild(zombie, 5 - i);
