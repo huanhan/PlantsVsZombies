@@ -7,6 +7,7 @@ import org.cocos2d.actions.base.CCRepeatForever;
 import org.cocos2d.actions.instant.CCCallFunc;
 import org.cocos2d.actions.interval.CCAnimate;
 import org.cocos2d.actions.interval.CCDelayTime;
+import org.cocos2d.actions.interval.CCJumpTo;
 import org.cocos2d.actions.interval.CCMoveBy;
 import org.cocos2d.actions.interval.CCMoveTo;
 import org.cocos2d.actions.interval.CCSequence;
@@ -68,6 +69,7 @@ public class CombatLayer extends CCLayer {
 
     private int currentSunNumber = 50;
     private ArrayList<Sun> suns;
+    private Sun sun;
 
 
     public CombatLayer() {
@@ -431,9 +433,32 @@ public class CombatLayer extends CCLayer {
         CCDelayTime ccDelayTime3 = CCDelayTime.action(60);
         CCCallFunc ccCallFunc3 = CCCallFunc.action(this, "startAddZombie3");
 
+        //天上落下阳光 20秒下一次
+        CCScheduler.sharedScheduler().schedule("createSkySun",this,20,false);
+
         CCSequence ccSequence = CCSequence.actions(ccDelayTime1, ccCallFunc1, ccDelayTime2, ccCallFunc2, ccDelayTime3, ccCallFunc3);
         runAction(ccSequence);
 
+    }
+
+    public void createSkySun(float t){
+        sun = new Sun();
+        int randomInt = random.nextInt(100);
+        //设置位置在最顶部
+        sun.setPosition(winSize.getWidth()/2+randomInt,winSize.getHeight()-100);
+        addChild(sun);
+        addSun(sun);
+        CCJumpTo ccJumpTo = CCJumpTo.action(1f, ccp(winSize.getWidth() / 2-randomInt, winSize.getHeight() / 3), 100, 2);
+        //5秒后自动消失
+        CCDelayTime ccDelayTime = CCDelayTime.action(5);
+        CCCallFunc removeSun = CCCallFunc.action(this, "removeSun");
+        CCSequence ccSequence = CCSequence.actions(ccJumpTo, ccDelayTime, removeSun);
+        sun.runAction(ccSequence);
+    }
+
+    public void removeSun(){
+        removeSun(sun);
+        sun.removeSelf();
     }
 
     public void startAddZombie1() {

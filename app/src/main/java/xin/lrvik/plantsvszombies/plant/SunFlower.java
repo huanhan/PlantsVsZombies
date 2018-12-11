@@ -37,7 +37,7 @@ public class SunFlower extends Plant {
         CCSequence ccSequence = CCSequence.actions(ccJumpTo, ccCallFunc1, ccDelayTime, ccCallFunc2);
         sun.runAction(ccSequence);
     }
-    
+
     public void addSun(){
         ((CombatLayer) getParent().getParent()).addSun(sun);
     }
