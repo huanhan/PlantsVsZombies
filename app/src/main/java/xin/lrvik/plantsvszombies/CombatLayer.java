@@ -69,10 +69,11 @@ public class CombatLayer extends CCLayer {
     private ArrayList<CGPoint> cgPoints_path;
     private Random random;
 
-    private int currentSunNumber = 50;
+    private int currentSunNumber = 1150;
     private ArrayList<Sun> suns;
     private Sun sun;
     private CCLabel ccLabel1ZombiesBatch;
+    private CCSprite finalWave;
 
 
     public CombatLayer() {
@@ -475,31 +476,46 @@ public class CombatLayer extends CCLayer {
 
     public void startAddZombie1() {
         setZombiesBatch(1);
-        addZombiesByNum(15,5f);
+        addZombiesByNum(15, 5f);
     }
 
 
     public void startAddZombie2() {
         setZombiesBatch(2);
 //        CCScheduler.sharedScheduler().schedule("addZombie", this, 10, false);
-        addZombiesByNum(30,3f);
+        addZombiesByNum(80, 3f);
     }
 
     public void startAddZombie3() {
+        setIsTouchEnabled(false);
+        finalWave = CCSprite.sprite("other/FinalWave.png");
+        finalWave.setPosition(winSize.getWidth() / 2, winSize.getHeight() / 2);
+        addChild(finalWave);
+
+        CCDelayTime ccDelayTime = CCDelayTime.action(2);
+        CCCallFunc removeFinalWave = CCCallFunc.action(this, "removeFinalWave");
+        CCSequence ccSequence = CCSequence.actions(ccDelayTime, removeFinalWave);
+        runAction(ccSequence);
+
         setZombiesBatch(3);
 //        CCScheduler.sharedScheduler().schedule("addZombie", this, 50, false);
-        addZombiesByNum(60,1f);
+        addZombiesByNum(200, 1f);
+    }
+
+    public void removeFinalWave() {
+        finalWave.removeSelf();
+        setIsTouchEnabled(true);
     }
 
     //根据数量增加僵尸
-    private void addZombiesByNum(int num,float delay) {
+    private void addZombiesByNum(int num, float delay) {
         //CCScheduler.sharedScheduler().schedule("addZombie", this, 20, false);
-        CCFiniteTimeAction[] cCFiniteTimeActions = new CCFiniteTimeAction[num*2];
-        for (int i = 0; i < num*2; i += 2) {
+        CCFiniteTimeAction[] cCFiniteTimeActions = new CCFiniteTimeAction[num * 2];
+        for (int i = 0; i < num * 2; i += 2) {
             cCFiniteTimeActions[i] = CCDelayTime.action(delay);
             cCFiniteTimeActions[i + 1] = CCCallFunc.action(this, "addZombie");
         }
-        CCSequence ccSequence = CCSequence.actions(CCDelayTime.action(1F),cCFiniteTimeActions);
+        CCSequence ccSequence = CCSequence.actions(CCDelayTime.action(1F), cCFiniteTimeActions);
         runAction(ccSequence);
     }
 
