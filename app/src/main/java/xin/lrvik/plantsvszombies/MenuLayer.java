@@ -54,8 +54,6 @@ class MenuLayer extends CCLayer {
             CCDirector.sharedDirector().getActivity().finish();
         }
         return super.ccTouchesBegan(event);
-
-
     }
 
     public void start(Object item){

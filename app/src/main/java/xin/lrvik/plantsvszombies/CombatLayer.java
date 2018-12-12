@@ -76,6 +76,8 @@ public class CombatLayer extends CCLayer {
     private CCSprite finalWave;
     private CCLabel ccLabel1;
     private int killZombiesNum = 0;
+    private CCSprite ccSprite_pause;
+    private CCLabel ccLabel_pause;
 
 
     public CombatLayer() {
@@ -136,6 +138,15 @@ public class CombatLayer extends CCLayer {
         CCCallFunc ccCallFunc = CCCallFunc.action(this, "loadChoose");
         CCSequence ccSequence = CCSequence.actions(ccDelayTime, ccMoveBy, ccCallFunc);
         cctmxTiledMap.runAction(ccSequence);
+
+        ccSprite_pause = CCSprite.sprite("other/pause.png");
+        ccSprite_pause.setPosition(winSize.getWidth()-ccSprite_pause.getBoundingBox().size.getWidth()/2-30,
+                winSize.getHeight()-ccSprite_pause.getBoundingBox().size.getHeight()/2-30);
+        addChild(ccSprite_pause);
+        ccLabel_pause = CCLabel.makeLabel("暂停", "", 30);
+        ccLabel_pause.setColor(ccColor3B.ccGREEN);
+        ccLabel_pause.setPosition(ccSprite_pause.getPosition());
+        addChild(ccLabel_pause);
     }
 
     public void loadChoose() {
@@ -196,6 +207,17 @@ public class CombatLayer extends CCLayer {
     @Override
     public boolean ccTouchesBegan(MotionEvent event) {
         CGPoint cgPoint = convertTouchToNodeSpace(event);
+
+        if (CGRect.containsPoint(ccSprite_pause.getBoundingBox(),cgPoint)) {
+            if (CCDirector.sharedDirector().getIsPaused()) {
+                CCDirector.sharedDirector().resume();
+                ccLabel_pause.setString("暂停");
+            }else {
+                CCDirector.sharedDirector().pause();
+                ccLabel_pause.setString("开始");
+            }
+        }
+
         //判断是否开始游戏
         if (isStart) {
             if (CGRect.containsPoint(ccSprite_seedBank.getBoundingBox(), cgPoint)) {
@@ -452,7 +474,7 @@ public class CombatLayer extends CCLayer {
         addChild(ccLabel1ZombiesBatch);
 
         ccLabel1 = CCLabel.makeLabel("已击杀0个僵尸", "", 25);
-        ccLabel1.setPosition(ccp(winSize.getWidth() - 250, winSize.getHeight() - 50));
+        ccLabel1.setPosition(ccp(winSize.getWidth() - 400, winSize.getHeight() - 50));
         ccLabel1.setColor(ccColor3B.ccRED);
         addChild(ccLabel1);
     }
