@@ -69,7 +69,7 @@ public class CombatLayer extends CCLayer {
     private ArrayList<CGPoint> cgPoints_path;
     private Random random;
 
-    private int currentSunNumber = 8000;
+    private int currentSunNumber = 50;
     private ArrayList<Sun> suns;
     private Sun sun;
     private CCLabel ccLabel1ZombiesBatch;
