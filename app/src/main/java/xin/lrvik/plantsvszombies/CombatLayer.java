@@ -28,7 +28,6 @@ import org.cocos2d.types.CGRect;
 import org.cocos2d.types.CGSize;
 import org.cocos2d.types.ccColor3B;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
@@ -76,8 +75,11 @@ public class CombatLayer extends CCLayer {
     private CCSprite finalWave;
     private CCLabel ccLabel1;
     private int killZombiesNum = 0;
-    private CCSprite ccSprite_pause;
+    private CCSprite ccSprite_tipbg;
     private CCLabel ccLabel_pause;
+    private CCSprite ccSprite_diamond;
+    private CCSprite ccSprite_tipbg2;
+    private CCLabel ccLabel_diamond;
 
 
     public CombatLayer() {
@@ -139,14 +141,30 @@ public class CombatLayer extends CCLayer {
         CCSequence ccSequence = CCSequence.actions(ccDelayTime, ccMoveBy, ccCallFunc);
         cctmxTiledMap.runAction(ccSequence);
 
-        ccSprite_pause = CCSprite.sprite("other/pause.png");
-        ccSprite_pause.setPosition(winSize.getWidth()-ccSprite_pause.getBoundingBox().size.getWidth()/2-30,
-                winSize.getHeight()-ccSprite_pause.getBoundingBox().size.getHeight()/2-30);
-        addChild(ccSprite_pause);
+        ccSprite_tipbg = CCSprite.sprite("other/tipbg.png");
+        ccSprite_tipbg.setPosition(winSize.getWidth() - ccSprite_tipbg.getBoundingBox().size.getWidth() / 2 - 30,
+                winSize.getHeight() - ccSprite_tipbg.getBoundingBox().size.getHeight() / 2 - 30);
+        addChild(ccSprite_tipbg);
         ccLabel_pause = CCLabel.makeLabel("暂停", "", 30);
         ccLabel_pause.setColor(ccColor3B.ccGREEN);
-        ccLabel_pause.setPosition(ccSprite_pause.getPosition());
+        ccLabel_pause.setPosition(ccSprite_tipbg.getPosition());
         addChild(ccLabel_pause);
+
+        ccSprite_tipbg2 = CCSprite.sprite("other/tipbg.png");
+        ccSprite_tipbg2.setPosition(winSize.getWidth() / 2 - ccSprite_tipbg2.getBoundingBox().size.getWidth() / 2 - 30,
+                winSize.getHeight() - ccSprite_tipbg2.getBoundingBox().size.getHeight() / 2 - 30);
+        addChild(ccSprite_tipbg2);
+        ccSprite_diamond = CCSprite.sprite("other/diamond.png");
+        //ccSprite_diamond.setContentSize(4,4);
+        ccSprite_diamond.setScale(0.5);
+        ccSprite_diamond.setPosition(ccp(ccSprite_tipbg2.getPosition().x - 30,
+                ccSprite_tipbg2.getPosition().y));
+        addChild(ccSprite_diamond);
+
+        ccLabel_diamond = CCLabel.makeLabel("0", "", 20);
+        ccLabel_diamond.setColor(ccColor3B.ccGREEN);
+        ccLabel_diamond.setPosition(ccSprite_diamond.getPosition().x + 50, ccSprite_diamond.getPosition().y);
+        addChild(ccLabel_diamond);
     }
 
     public void loadChoose() {
@@ -208,11 +226,11 @@ public class CombatLayer extends CCLayer {
     public boolean ccTouchesBegan(MotionEvent event) {
         CGPoint cgPoint = convertTouchToNodeSpace(event);
 
-        if (CGRect.containsPoint(ccSprite_pause.getBoundingBox(),cgPoint)) {
+        if (CGRect.containsPoint(ccSprite_tipbg.getBoundingBox(), cgPoint)) {
             if (CCDirector.sharedDirector().getIsPaused()) {
                 CCDirector.sharedDirector().resume();
                 ccLabel_pause.setString("暂停");
-            }else {
+            } else {
                 CCDirector.sharedDirector().pause();
                 ccLabel_pause.setString("开始");
             }
