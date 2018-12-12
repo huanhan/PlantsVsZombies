@@ -6,6 +6,7 @@ import org.cocos2d.actions.CCScheduler;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Random;
 
 import xin.lrvik.plantsvszombies.bullet.Bullet;
 import xin.lrvik.plantsvszombies.plant.ShooterPlant;
@@ -16,6 +17,7 @@ import xin.lrvik.plantsvszombies.plant.ShooterPlant;
  */
 public class CombatLine {
 
+    private final Random random;
     private SparseArray<Plant> plants;
     private ArrayList<Zombie> zombies;
     private final ArrayList<ShooterPlant> shooterPlants;
@@ -27,6 +29,7 @@ public class CombatLine {
         CCScheduler.sharedScheduler().schedule("attackPlant", this, 1, false);
         CCScheduler.sharedScheduler().schedule("attackZombie", this, 1, false);
         CCScheduler.sharedScheduler().schedule("bulletHurtCompute", this, 0.2f, false);
+        random = new Random();
     }
 
     public void addPlant(int col, Plant plant) {
@@ -112,7 +115,9 @@ public class CombatLine {
                             //僵尸血量为0时移除僵尸
                             if (zombie.getHP() == 0) {
                                 ((CombatLayer) zombie.getParent().getParent()).setKillZombiesNum();
-                                //todo 僵尸死亡掉钻石
+                                if (random.nextInt(100) > 96) {
+                                    ((CombatLayer) zombie.getParent().getParent()).addDiamond(zombie);
+                                }
                                 zombie.removeSelf();
                                 iterator.remove();
                             }

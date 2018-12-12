@@ -68,7 +68,7 @@ public class CombatLayer extends CCLayer {
     private ArrayList<CGPoint> cgPoints_path;
     private Random random;
 
-    private int currentSunNumber = 50;
+    private int currentSunNumber = 50000;
     private ArrayList<Sun> suns;
     private Sun sun;
     private CCLabel ccLabel1ZombiesBatch;
@@ -80,6 +80,9 @@ public class CombatLayer extends CCLayer {
     private CCSprite ccSprite_diamond;
     private CCSprite ccSprite_tipbg2;
     private CCLabel ccLabel_diamond;
+    private ArrayList<Diamond> diamonds;
+    private int diamondsNum;
+    private Diamond diamond;
 
 
     public CombatLayer() {
@@ -165,6 +168,8 @@ public class CombatLayer extends CCLayer {
         ccLabel_diamond.setColor(ccColor3B.ccGREEN);
         ccLabel_diamond.setPosition(ccSprite_diamond.getPosition().x + 50, ccSprite_diamond.getPosition().y);
         addChild(ccLabel_diamond);
+
+        diamonds = new ArrayList<>();
     }
 
     public void loadChoose() {
@@ -318,6 +323,13 @@ public class CombatLayer extends CCLayer {
                     if (CGRect.containsPoint(sun.getBoundingBox(), cgPoint)) {
                         sun.collect();
                     }
+                }
+
+                for (Diamond diamond : diamonds) {
+                    if (CGRect.containsPoint(diamond.getBoundingBox(), cgPoint)) {
+                        diamond.collect(ccSprite_tipbg2.getPosition());
+                    }
+
                 }
             }
 
@@ -669,5 +681,32 @@ public class CombatLayer extends CCLayer {
         currentSunNumber += i;
         ccLabel.setString(currentSunNumber + "");
         update();
+    }
+
+    public void addDiamond(Zombie zombie) {
+        if (diamond == null) {
+            diamond = new Diamond();
+            diamond.setScale(0.8f);
+            diamond.setPosition(zombie.getPosition().x - 80, zombie.getPosition().y);
+            addChild(diamond);
+            diamonds.add(diamond);
+
+            CCDelayTime ccDelayTime = CCDelayTime.action(5);
+            CCCallFunc ccCallFunc1 = CCCallFunc.action(this, "removeDiamond");
+            CCSequence ccSequence = CCSequence.actions(ccDelayTime, ccCallFunc1);
+            runAction(ccSequence);
+        }
+    }
+
+    public void removeDiamond() {
+        diamond.removeSelf();
+        diamonds.remove(diamond);
+        diamond = null;
+    }
+
+    public void addDiamondNumber() {
+        diamondsNum++;
+        ccLabel_diamond.setString(diamondsNum + "");
+        diamond = null;
     }
 }
