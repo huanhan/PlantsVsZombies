@@ -111,6 +111,8 @@ public class CombatLine {
                             zombie.hurtCompute(bullet.getAttack());
                             //僵尸血量为0时移除僵尸
                             if (zombie.getHP() == 0) {
+                                ((CombatLayer) zombie.getParent().getParent()).setKillZombiesNum();
+                                //todo 僵尸死亡掉钻石
                                 zombie.removeSelf();
                                 iterator.remove();
                             }

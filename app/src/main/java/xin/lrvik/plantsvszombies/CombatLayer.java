@@ -69,11 +69,13 @@ public class CombatLayer extends CCLayer {
     private ArrayList<CGPoint> cgPoints_path;
     private Random random;
 
-    private int currentSunNumber = 1150;
+    private int currentSunNumber = 8000;
     private ArrayList<Sun> suns;
     private Sun sun;
     private CCLabel ccLabel1ZombiesBatch;
     private CCSprite finalWave;
+    private CCLabel ccLabel1;
+    private int killZombiesNum = 0;
 
 
     public CombatLayer() {
@@ -444,10 +446,32 @@ public class CombatLayer extends CCLayer {
         runAction(ccSequence);
 
 
-        ccLabel1ZombiesBatch = CCLabel.makeLabel("第  0/3  拨僵尸", "", 20);
+        ccLabel1ZombiesBatch = CCLabel.makeLabel("第  0/3  波僵尸", "", 20);
         ccLabel1ZombiesBatch.setPosition(ccp(winSize.getWidth() - 100, 50));
         ccLabel1ZombiesBatch.setColor(ccColor3B.ccRED);
         addChild(ccLabel1ZombiesBatch);
+
+        ccLabel1 = CCLabel.makeLabel("已击杀0个僵尸", "", 25);
+        ccLabel1.setPosition(ccp(winSize.getWidth() - 250, winSize.getHeight() - 50));
+        ccLabel1.setColor(ccColor3B.ccRED);
+        addChild(ccLabel1);
+    }
+
+
+    public void setKillZombiesNum() {
+        killZombiesNum++;
+        ccLabel1.setString("已击杀" + killZombiesNum + "个僵尸");
+
+        if (killZombiesNum >= 295) {
+            CCLabel ccLabel2 = CCLabel.makeLabel("通关成功", "", 80);
+            ccLabel2.setPosition(ccp(winSize.getWidth() / 2, winSize.getHeight() / 2));
+            ccLabel2.setColor(ccColor3B.ccRED);
+            addChild(ccLabel2);
+            CCDelayTime ccDelayTime = CCDelayTime.action(2);
+            CCCallFunc end = CCCallFunc.action(this, "restart");
+            CCSequence ccSequence = CCSequence.actions(ccDelayTime, end);
+            runAction(ccSequence);
+        }
     }
 
     private void setZombiesBatch(int batch) {
@@ -566,7 +590,7 @@ public class CombatLayer extends CCLayer {
 
     public void end() {
         setIsTouchEnabled(false);
-        CCScheduler.sharedScheduler().unschedule("addZombie", this);
+        //CCScheduler.sharedScheduler().unschedule("addZombie", this);
         for (CCNode ccNode : cctmxTiledMap.getChildren()) {
             ccNode.stopAllActions();
             ccNode.unscheduleAllSelectors();
