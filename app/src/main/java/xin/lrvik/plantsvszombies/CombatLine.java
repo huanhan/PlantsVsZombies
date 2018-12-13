@@ -39,6 +39,12 @@ public class CombatLine {
         }
     }
 
+    public void removePlant(int col){
+        Plant plant = plants.get(col);
+        plants.remove(col);
+        plant.removeSelf();
+    }
+
     public boolean isContainPlant(int col) {
         if (plants.get(col) != null) {
             return true;
@@ -115,7 +121,7 @@ public class CombatLine {
                             //僵尸血量为0时移除僵尸
                             if (zombie.getHP() == 0) {
                                 ((CombatLayer) zombie.getParent().getParent()).setKillZombiesNum();
-                                if (random.nextInt(100) > 96) {
+                                if (random.nextInt(100) > 60) {
                                     ((CombatLayer) zombie.getParent().getParent()).addDiamond(zombie);
                                 }
                                 zombie.removeSelf();

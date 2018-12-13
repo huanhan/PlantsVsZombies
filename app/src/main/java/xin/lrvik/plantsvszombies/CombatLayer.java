@@ -83,6 +83,7 @@ public class CombatLayer extends CCLayer {
     private ArrayList<Diamond> diamonds;
     private int diamondsNum;
     private Diamond diamond;
+    private CCSprite ccSprite_shovel;
 
 
     public CombatLayer() {
@@ -154,7 +155,7 @@ public class CombatLayer extends CCLayer {
         addChild(ccLabel_pause);
 
         ccSprite_tipbg2 = CCSprite.sprite("other/tipbg.png");
-        ccSprite_tipbg2.setPosition(winSize.getWidth() / 2 - ccSprite_tipbg2.getBoundingBox().size.getWidth() / 2 - 30,
+        ccSprite_tipbg2.setPosition(winSize.getWidth() / 2 - ccSprite_tipbg2.getBoundingBox().size.getWidth() / 2 + 200,
                 winSize.getHeight() - ccSprite_tipbg2.getBoundingBox().size.getHeight() / 2 - 30);
         addChild(ccSprite_tipbg2);
         ccSprite_diamond = CCSprite.sprite("other/diamond.png");
@@ -318,6 +319,27 @@ public class CombatLayer extends CCLayer {
                         addChild(selectPlant);*/
                     }
                 }
+            } else if (CGRect.containsPoint(ccSprite_shovel.getBoundingBox(), cgPoint)) {
+                if (ccSprite_shovel.getOpacity() != 100) {
+                    ccSprite_shovel.setOpacity(100);
+                } else {
+                    ccSprite_shovel.setOpacity(255);
+                }
+
+            } else if (ccSprite_shovel.getOpacity() == 100) {
+                //算出点击的位置的行列
+                int col = (int) (cgPoint.x - 220) / 105;
+                int row = (int) (cgPoint.y - 40) / 120;
+                if (col >= 0 && col < 9 && row >= 0 && row < 5) {
+                    //获取行
+                    CombatLine combatLine = combatLines.get(row);
+                    //获取当前列，看是否有植物
+                    if (combatLine.isContainPlant(col)) {
+                        combatLine.removePlant(col);
+                    }
+                    ccSprite_shovel.setOpacity(255);
+                }
+
             } else {
                 for (Sun sun : suns) {
                     if (CGRect.containsPoint(sun.getBoundingBox(), cgPoint)) {
@@ -503,16 +525,20 @@ public class CombatLayer extends CCLayer {
         ccLabel1ZombiesBatch.setColor(ccColor3B.ccRED);
         addChild(ccLabel1ZombiesBatch);
 
-        ccLabel1 = CCLabel.makeLabel("已击杀0个僵尸", "", 25);
-        ccLabel1.setPosition(ccp(winSize.getWidth() - 400, winSize.getHeight() - 50));
+        ccLabel1 = CCLabel.makeLabel("击杀0", "", 25);
+        ccLabel1.setPosition(ccp(winSize.getWidth() - 250, winSize.getHeight() - 50));
         ccLabel1.setColor(ccColor3B.ccRED);
         addChild(ccLabel1);
+
+        ccSprite_shovel = CCSprite.sprite("other/shovel.png");
+        ccSprite_shovel.setPosition(winSize.getWidth() / 2 - 150, winSize.getHeight() - 40);
+        addChild(ccSprite_shovel);
     }
 
 
     public void setKillZombiesNum() {
         killZombiesNum++;
-        ccLabel1.setString("已击杀" + killZombiesNum + "个僵尸");
+        ccLabel1.setString("击杀" + killZombiesNum);
 
         if (killZombiesNum >= 295) {
             CCLabel ccLabel2 = CCLabel.makeLabel("通关成功", "", 80);
