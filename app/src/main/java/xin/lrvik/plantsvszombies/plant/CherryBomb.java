@@ -69,6 +69,7 @@ public class CherryBomb extends Plant {
                 Zombie zombie = iterator.next();
                 if(CGPointUtil.distance(zombie.getPosition(),this.getPosition())<150){
                     zombie.die(1);
+                    ((CombatLayer) zombie.getParent().getParent()).setKillZombiesNum();
                     iterator.remove();
                 }
             }
