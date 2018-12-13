@@ -137,7 +137,7 @@ public class CombatLine {
                                 }
 
                                 //zombie.removeSelf();
-                                zombie.die();
+                                zombie.die(0);
                                 iterator.remove();
                             }
 
@@ -148,5 +148,11 @@ public class CombatLine {
         }
     }
 
+    public ArrayList<Zombie> getZombies() {
+        return zombies;
+    }
 
+    public void setZombies(ArrayList<Zombie> zombies) {
+        this.zombies = zombies;
+    }
 }

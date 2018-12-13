@@ -63,25 +63,37 @@ public class Zombie extends CCSprite {
         }
     }
 
-    public void die() {
+    public void die(int mode) {
         stopAllActions();
+
         ArrayList<CCSpriteFrame> frames = new ArrayList<>();
-        for (int i = 0; i < 9; i++) {
-            CCSpriteFrame ccSpriteFrame = CCSprite.sprite(String.format(Locale.CHINA,
-                    "zombies/zombies_1/die/Frame%02d.png", i)).displayedFrame();
-            frames.add(ccSpriteFrame);
+
+        if (mode == 1) {
+            for (int i = 0; i < 19; i++) {
+                CCSpriteFrame ccSpriteFrame = CCSprite.sprite(String.format(Locale.CHINA,
+                        "zombies/zombies_1/ashes/Frame%02d.png", i)).displayedFrame();
+
+                frames.add(ccSpriteFrame);
+            }
+        } else {
+            for (int i = 0; i < 9; i++) {
+                CCSpriteFrame ccSpriteFrame = CCSprite.sprite(String.format(Locale.CHINA,
+                        "zombies/zombies_1/die/Frame%02d.png", i)).displayedFrame();
+                frames.add(ccSpriteFrame);
+            }
+
         }
+
         CCAnimation ccAnimation = CCAnimation.animationWithFrames(frames, 0.15f);
         CCAnimate ccAnimate = CCAnimate.action(ccAnimation, false);
-        runAction(ccAnimate);
 
         CCCallFunc removeZombie = CCCallFunc.action(this, "removeZombie");
-        CCDelayTime ccDelayTime = CCDelayTime.action(2f);
-        CCSequence ccSequence = CCSequence.actions(ccDelayTime, removeZombie);
+        CCSequence ccSequence = CCSequence.actions(ccAnimate, removeZombie);
+
         runAction(ccSequence);
     }
 
-    public void removeZombie(){
+    public void removeZombie() {
         removeSelf();
     }
 

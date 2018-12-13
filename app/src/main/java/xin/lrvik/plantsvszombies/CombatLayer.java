@@ -735,4 +735,8 @@ public class CombatLayer extends CCLayer {
         ccLabel_diamond.setString(diamondsNum + "");
         diamond = null;
     }
+
+    public ArrayList<CombatLine> getCombatLines() {
+        return combatLines;
+    }
 }
