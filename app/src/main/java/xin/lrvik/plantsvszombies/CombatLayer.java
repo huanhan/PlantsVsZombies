@@ -563,7 +563,7 @@ public class CombatLayer extends CCLayer {
         sun.setPosition(winSize.getWidth() / 2 + randomInt, winSize.getHeight() - 100);
         addChild(sun);
         addSun(sun);
-        CCJumpTo ccJumpTo = CCJumpTo.action(1f, ccp(winSize.getWidth() / 2 - randomInt, winSize.getHeight() / 3), 100, 2);
+        CCJumpTo ccJumpTo = CCJumpTo.action(1f, ccp(winSize.getWidth() / 2 - randomInt, winSize.getHeight() / 3), 100, 1);
         //5秒后自动消失
         CCDelayTime ccDelayTime = CCDelayTime.action(5);
         CCCallFunc removeSun = CCCallFunc.action(this, "removeSun");

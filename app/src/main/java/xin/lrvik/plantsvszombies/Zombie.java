@@ -63,10 +63,33 @@ public class Zombie extends CCSprite {
         }
     }
 
+    public void die() {
+        stopAllActions();
+        ArrayList<CCSpriteFrame> frames = new ArrayList<>();
+        for (int i = 0; i < 9; i++) {
+            CCSpriteFrame ccSpriteFrame = CCSprite.sprite(String.format(Locale.CHINA,
+                    "zombies/zombies_1/die/Frame%02d.png", i)).displayedFrame();
+            frames.add(ccSpriteFrame);
+        }
+        CCAnimation ccAnimation = CCAnimation.animationWithFrames(frames, 0.15f);
+        CCAnimate ccAnimate = CCAnimate.action(ccAnimation, false);
+        runAction(ccAnimate);
+
+        CCCallFunc removeZombie = CCCallFunc.action(this, "removeZombie");
+        CCDelayTime ccDelayTime = CCDelayTime.action(2f);
+        CCSequence ccSequence = CCSequence.actions(ccDelayTime, removeZombie);
+        runAction(ccSequence);
+    }
+
+    public void removeZombie(){
+        removeSelf();
+    }
+
     public void hurtCompute(int attack) {
         HP -= attack;
         if (HP < 0) {
             HP = 0;
+            //die();
         }
     }
 
@@ -79,7 +102,7 @@ public class Zombie extends CCSprite {
     }
 
     public enum State {
-        MOVE, ATTACK
+        MOVE, ATTACK, DIE
     }
 
     public Zombie(CombatLayer combatLayer, CGPoint start, CGPoint end) {
@@ -99,7 +122,7 @@ public class Zombie extends CCSprite {
         if (isSlow) {
             CCSpeed ccSpeed = CCSpeed.action(ccSequence, 0.2f);
             runAction(ccSpeed);
-        }else {
+        } else {
             runAction(ccSequence);
         }
         ArrayList<CCSpriteFrame> frames = new ArrayList<>();
@@ -115,7 +138,7 @@ public class Zombie extends CCSprite {
         if (isSlow) {
             CCSpeed ccSpeed = CCSpeed.action(ccRepeatForever, 0.2f);
             runAction(ccSpeed);
-        }else {
+        } else {
             runAction(ccRepeatForever);
         }
         setState(State.MOVE);
@@ -135,7 +158,7 @@ public class Zombie extends CCSprite {
         if (isSlow) {
             CCSpeed ccSpeed = CCSpeed.action(ccRepeatForever, 0.2f);
             runAction(ccSpeed);
-        }else {
+        } else {
             runAction(ccRepeatForever);
         }
         setState(State.ATTACK);

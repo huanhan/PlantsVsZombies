@@ -3,9 +3,18 @@ package xin.lrvik.plantsvszombies;
 import android.util.SparseArray;
 
 import org.cocos2d.actions.CCScheduler;
+import org.cocos2d.actions.base.CCRepeatForever;
+import org.cocos2d.actions.instant.CCCallFunc;
+import org.cocos2d.actions.interval.CCAnimate;
+import org.cocos2d.actions.interval.CCDelayTime;
+import org.cocos2d.actions.interval.CCSequence;
+import org.cocos2d.nodes.CCAnimation;
+import org.cocos2d.nodes.CCSprite;
+import org.cocos2d.nodes.CCSpriteFrame;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Random;
 
 import xin.lrvik.plantsvszombies.bullet.Bullet;
@@ -120,11 +129,15 @@ public class CombatLine {
                             zombie.hurtCompute(bullet.getAttack());
                             //僵尸血量为0时移除僵尸
                             if (zombie.getHP() == 0) {
+                                //设置击杀僵尸数
                                 ((CombatLayer) zombie.getParent().getParent()).setKillZombiesNum();
+                                //随机掉落钻石
                                 if (random.nextInt(100) > 60) {
                                     ((CombatLayer) zombie.getParent().getParent()).addDiamond(zombie);
                                 }
-                                zombie.removeSelf();
+
+                                //zombie.removeSelf();
+                                zombie.die();
                                 iterator.remove();
                             }
 
@@ -134,5 +147,6 @@ public class CombatLine {
             }
         }
     }
+
 
 }
