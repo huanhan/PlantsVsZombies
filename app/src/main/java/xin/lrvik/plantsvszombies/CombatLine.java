@@ -18,6 +18,7 @@ import java.util.Locale;
 import java.util.Random;
 
 import xin.lrvik.plantsvszombies.bullet.Bullet;
+import xin.lrvik.plantsvszombies.plant.Chomper;
 import xin.lrvik.plantsvszombies.plant.ShooterPlant;
 
 
@@ -27,6 +28,7 @@ import xin.lrvik.plantsvszombies.plant.ShooterPlant;
 public class CombatLine {
 
     private final Random random;
+    private final ArrayList<Chomper> chomperPlants;
     private SparseArray<Plant> plants;
     private ArrayList<Zombie> zombies;
     private final ArrayList<ShooterPlant> shooterPlants;
@@ -35,9 +37,11 @@ public class CombatLine {
         plants = new SparseArray<>();
         zombies = new ArrayList<>();
         shooterPlants = new ArrayList<>();
+        chomperPlants = new ArrayList<>();
         CCScheduler.sharedScheduler().schedule("attackPlant", this, 1, false);
         CCScheduler.sharedScheduler().schedule("attackZombie", this, 1, false);
         CCScheduler.sharedScheduler().schedule("bulletHurtCompute", this, 0.2f, false);
+        CCScheduler.sharedScheduler().schedule("chomperHurt", this, 0.2f, false);
         random = new Random();
     }
 
@@ -46,11 +50,20 @@ public class CombatLine {
         if (plant instanceof ShooterPlant) {
             shooterPlants.add((ShooterPlant) plant);
         }
+        if (plant instanceof Chomper) {
+            chomperPlants.add((Chomper) plant);
+        }
     }
 
-    public void removePlant(int col){
+    public void removePlant(int col) {
         Plant plant = plants.get(col);
         plants.remove(col);
+        if (plant instanceof ShooterPlant) {
+            shooterPlants.remove(plant);
+        }
+        if (plant instanceof Chomper) {
+            shooterPlants.remove(plant);
+        }
         plant.removeSelf();
     }
 
@@ -79,8 +92,8 @@ public class CombatLine {
                             Plant plant = plants.get(col);
                             plant.hurtCompute(zombie.getAttack());
                             if (plant.getHP() == 0) {
-                                plants.remove(col);
-                                plant.removeSelf();
+                                removePlant(col);
+                                //plant.removeSelf();
                                 zombie.stopAllActions();
                                 zombie.move();
                             }
@@ -101,6 +114,23 @@ public class CombatLine {
                     shooterPlant.stopAttackZombie();
                 } else {
                     shooterPlant.attackZombie();
+                }
+            }
+        }
+    }
+
+    public void chomperHurt(float t) {
+        if (chomperPlants.size() > 0 && zombies.size() > 0) {
+            for (Chomper chomperPlant : chomperPlants) {
+                for (Zombie zombie : zombies) {
+                    if (zombie.getPosition().x - chomperPlant.getPosition().x < 50) {
+                        if (!chomperPlant.isEat()) {
+                            chomperPlant.eat(zombie);
+                            zombies.remove(zombie);
+                        }
+                        //zombie.removeSelf();
+                    }
+
                 }
             }
         }
