@@ -11,6 +11,7 @@ import org.cocos2d.actions.interval.CCSequence;
 import org.cocos2d.nodes.CCAnimation;
 import org.cocos2d.nodes.CCSprite;
 import org.cocos2d.nodes.CCSpriteFrame;
+import org.cocos2d.types.util.CGPointUtil;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -134,9 +135,10 @@ public class CombatLine {
             for (Chomper chomperPlant : chomperPlants) {
                 for (Zombie zombie : zombies) {
                     float dis = zombie.getPosition().x - chomperPlant.getPosition().x;
-                    if (dis < 50 && dis > -30) {
+                    if (dis < 50 && dis > -50) {
                         if (!chomperPlant.isEat()) {
                             chomperPlant.eat(zombie);
+                            ((CombatLayer) zombie.getParent().getParent()).setKillZombiesNum();
                             zombies.remove(zombie);
                         }
                         //zombie.removeSelf();
@@ -154,7 +156,7 @@ public class CombatLine {
                 //int col = (int) (potatoMine.getPosition().x - 280) / 105;
                 for (Zombie zombie : zombies) {
                     float dis = zombie.getPosition().x - potatoMine.getPosition().x;
-                    if (dis < 30 && dis > -30) {
+                    if (dis < 50 && dis > -50) {
                         if (potatoMine.isBig() && !potatoMine.isBoom()) {
                             potatoMine.boom();
                             /*zombies.remove(zombie);
@@ -169,7 +171,7 @@ public class CombatLine {
 
     public void bulletHurtCompute(float t) {
         //判断植物和僵尸是否为空
-        if (!shooterPlants.isEmpty() && !zombies.isEmpty()) {
+        if (!zombies.isEmpty()) {
             //遍历植物
             for (ShooterPlant shooterPlant : shooterPlants) {
                 //获取植物的子弹
