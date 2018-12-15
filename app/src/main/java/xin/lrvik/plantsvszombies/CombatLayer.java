@@ -1,5 +1,6 @@
 package xin.lrvik.plantsvszombies;
 
+import android.util.Log;
 import android.view.MotionEvent;
 
 import org.cocos2d.actions.CCScheduler;
@@ -41,6 +42,8 @@ import xin.lrvik.plantsvszombies.plant.Repeater;
 import xin.lrvik.plantsvszombies.plant.SnowPea;
 import xin.lrvik.plantsvszombies.plant.SunFlower;
 import xin.lrvik.plantsvszombies.plant.WallNut;
+
+import static android.content.ContentValues.TAG;
 
 
 /**
@@ -484,11 +487,6 @@ public class CombatLayer extends CCLayer {
             cgPoints_towers.add(cgPoints_tower);
         }
 
-        //创建每层的空位
-        combatLines = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
-            combatLines.add(new CombatLine());
-        }
 
         cgPoints_path = new ArrayList<>();
         CCTMXObjectGroup objectGroup_tower = cctmxTiledMap.objectGroupNamed("path");
@@ -498,6 +496,14 @@ public class CombatLayer extends CCLayer {
             float x = Float.parseFloat(object.get("x"));
             float y = Float.parseFloat(object.get("y"));
             cgPoints_path.add(ccp(x, y));
+        }
+
+        //创建每层的空位
+        combatLines = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            LawnMower lawnMower = new LawnMower(cgPoints_path.get(2 * i + 1), cgPoints_path.get(2 * i));
+            cctmxTiledMap.addChild(lawnMower, 5 - i);
+            combatLines.add(new CombatLine(lawnMower));
         }
 
         random = new Random();
@@ -533,6 +539,7 @@ public class CombatLayer extends CCLayer {
         ccSprite_shovel = CCSprite.sprite("other/shovel.png");
         ccSprite_shovel.setPosition(winSize.getWidth() / 2 - 150, winSize.getHeight() - 40);
         addChild(ccSprite_shovel);
+
     }
 
 
@@ -540,11 +547,16 @@ public class CombatLayer extends CCLayer {
         killZombiesNum++;
         ccLabel1.setString("击杀" + killZombiesNum);
 
+        //295
         if (killZombiesNum >= 295) {
-            CCLabel ccLabel2 = CCLabel.makeLabel("通关成功", "", 80);
+            CCLabel ccLabel2 = CCLabel.makeLabel("通关成功", "", 40);
             ccLabel2.setPosition(ccp(winSize.getWidth() / 2, winSize.getHeight() / 2));
             ccLabel2.setColor(ccColor3B.ccRED);
             addChild(ccLabel2);
+            CCSprite ccSprite_trophy = CCSprite.sprite("other/trophy.png");
+            ccSprite_trophy.setPosition(ccp(winSize.getWidth() / 2,
+                    winSize.getHeight() / 2 + ccSprite_trophy.getBoundingBox().size.getHeight()));
+            addChild(ccSprite_trophy);
             CCDelayTime ccDelayTime = CCDelayTime.action(2);
             CCCallFunc end = CCCallFunc.action(this, "restart");
             CCSequence ccSequence = CCSequence.actions(ccDelayTime, end);
@@ -661,31 +673,37 @@ public class CombatLayer extends CCLayer {
 
     public void addZombie() {
         int i = random.nextInt(5);
-        Zombie zombie = new Zombie(this, cgPoints_path.get(2 * i), cgPoints_path.get(2 * i + 1));
+        Zombie zombie = new Zombie(this, cgPoints_path.get(2 * i), cgPoints_path.get(2 * i + 1), i);
         cctmxTiledMap.addChild(zombie, 5 - i);
         combatLines.get(i).addZombie(zombie);
     }
 
-    public void end() {
-        setIsTouchEnabled(false);
-        //CCScheduler.sharedScheduler().unschedule("addZombie", this);
-        for (CCNode ccNode : cctmxTiledMap.getChildren()) {
-            ccNode.stopAllActions();
-            ccNode.unscheduleAllSelectors();
-        }
-        for (CCNode ccNode : getChildren()) {
-            ccNode.stopAllActions();
-            ccNode.unscheduleAllSelectors();
-        }
 
-        CCSprite ccSprite_ZombiesWon = CCSprite.sprite("zombieswon/ZombiesWon.png");
-        ccSprite_ZombiesWon.setPosition(winSize.getWidth() / 2, winSize.getHeight() / 2);
-        addChild(ccSprite_ZombiesWon);
-        CCDelayTime ccDelayTime = CCDelayTime.action(2);
-        CCCallFunc ccCallFunc = CCCallFunc.action(this, "restart");
-        CCSequence ccSequence = CCSequence.actions(ccDelayTime, ccCallFunc);
-        ccSprite_ZombiesWon.runAction(ccSequence);
+    public void end(Object node, Object row) {
+        Log.d(TAG, "row: " + row);
+        LawnMower lawnMower = combatLines.get((Integer) row).getLawnMower();
+        if (lawnMower.getState()== LawnMower.State.WAIT) {
+            lawnMower.move();
+        } else {
+            setIsTouchEnabled(false);
+            //CCScheduler.sharedScheduler().unschedule("addZombie", this);
+            for (CCNode ccNode : cctmxTiledMap.getChildren()) {
+                ccNode.stopAllActions();
+                ccNode.unscheduleAllSelectors();
+            }
+            for (CCNode ccNode : getChildren()) {
+                ccNode.stopAllActions();
+                ccNode.unscheduleAllSelectors();
+            }
 
+            CCSprite ccSprite_ZombiesWon = CCSprite.sprite("zombieswon/ZombiesWon.png");
+            ccSprite_ZombiesWon.setPosition(winSize.getWidth() / 2, winSize.getHeight() / 2);
+            addChild(ccSprite_ZombiesWon);
+            CCDelayTime ccDelayTime = CCDelayTime.action(2);
+            CCCallFunc ccCallFunc = CCCallFunc.action(this, "restart");
+            CCSequence ccSequence = CCSequence.actions(ccDelayTime, ccCallFunc);
+            ccSprite_ZombiesWon.runAction(ccSequence);
+        }
     }
 
     public void restart() {

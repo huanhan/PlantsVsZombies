@@ -35,8 +35,11 @@ public class CombatLine {
     private ArrayList<Zombie> zombies;
     private final ArrayList<ShooterPlant> shooterPlants;
     private final ArrayList<PotatoMine> potatoMinePlants;
+    private LawnMower lawnMower;
 
-    public CombatLine() {
+
+    public CombatLine(LawnMower lawnMower) {
+        this.lawnMower = lawnMower;
         plants = new SparseArray<>();
         zombies = new ArrayList<>();
         shooterPlants = new ArrayList<>();
@@ -47,6 +50,7 @@ public class CombatLine {
         CCScheduler.sharedScheduler().schedule("bulletHurtCompute", this, 0.2f, false);
         CCScheduler.sharedScheduler().schedule("chomperHurt", this, 0.2f, false);
         CCScheduler.sharedScheduler().schedule("potatoMineHurt", this, 0.2f, false);
+        CCScheduler.sharedScheduler().schedule("lawnMowerHurt", this, 0.2f, false);
         random = new Random();
     }
 
@@ -211,11 +215,28 @@ public class CombatLine {
         }
     }
 
+    public void lawnMowerHurt(float t) {
+        if (lawnMower.getState()!=LawnMower.State.END) {
+            for (Zombie zombie : zombies) {
+                float dis = zombie.getPosition().x - lawnMower.getPosition().x;
+                if (dis < 0) {
+                    zombie.die(0);
+                    ((CombatLayer) zombie.getParent().getParent()).setKillZombiesNum();
+                    zombies.remove(zombie);
+                }
+            }
+        }
+    }
+
     public ArrayList<Zombie> getZombies() {
         return zombies;
     }
 
     public void setZombies(ArrayList<Zombie> zombies) {
         this.zombies = zombies;
+    }
+
+    public LawnMower getLawnMower() {
+        return lawnMower;
     }
 }

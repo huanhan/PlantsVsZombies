@@ -68,7 +68,7 @@ public class PotatoMine extends Plant {
                     "plant/PotatoMine/boom/Frame%02d.png", i)).displayedFrame();
             frames.add(ccSpriteFrame);
         }
-        CCAnimation ccAnimation = CCAnimation.animationWithFrames(frames, 0.6f);
+        CCAnimation ccAnimation = CCAnimation.animationWithFrames(frames, 0.4f);
         CCAnimate ccAnimate = CCAnimate.action(ccAnimation, false);
 
         CCCallFunc removeZombie = CCCallFunc.action(this, "removePotatoMine");

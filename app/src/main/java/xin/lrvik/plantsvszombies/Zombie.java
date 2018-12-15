@@ -3,6 +3,8 @@ package xin.lrvik.plantsvszombies;
 import org.cocos2d.actions.base.CCRepeatForever;
 import org.cocos2d.actions.base.CCSpeed;
 import org.cocos2d.actions.instant.CCCallFunc;
+import org.cocos2d.actions.instant.CCCallFuncN;
+import org.cocos2d.actions.instant.CCCallFuncND;
 import org.cocos2d.actions.interval.CCAnimate;
 import org.cocos2d.actions.interval.CCDelayTime;
 import org.cocos2d.actions.interval.CCMoveTo;
@@ -21,7 +23,8 @@ import java.util.Locale;
  * Author by 豢涵, Email huanhanfu@126.com, Date on 2018/11/19.
  */
 public class Zombie extends CCSprite {
-    private float speed = 10;
+    private final int row;
+    private float speed = 15;
     private final CGPoint end;
     private final CombatLayer combatLayer;
     private int attack = 10;
@@ -117,19 +120,20 @@ public class Zombie extends CCSprite {
         MOVE, ATTACK, DIE
     }
 
-    public Zombie(CombatLayer combatLayer, CGPoint start, CGPoint end) {
+    public Zombie(CombatLayer combatLayer, CGPoint start, CGPoint end,int row) {
         super("zombies/zombies_1/walk/Frame00.png");
         setAnchorPoint(0.5f, 0);
         setPosition(start);
         this.combatLayer = combatLayer;
         this.end = end;
+        this.row = row;
         move();
     }
 
     public void move() {
         float t = CGPointUtil.distance(getPosition(), end) / speed;
         CCMoveTo ccMoveTo = CCMoveTo.action(t, end);
-        CCCallFunc ccCallFunc = CCCallFunc.action(combatLayer, "end");
+        CCCallFunc ccCallFunc = CCCallFuncND.action(combatLayer, "end",row);
         CCSequence ccSequence = CCSequence.actions(ccMoveTo, ccCallFunc);
         if (isSlow) {
             CCSpeed ccSpeed = CCSpeed.action(ccSequence, 0.2f);
