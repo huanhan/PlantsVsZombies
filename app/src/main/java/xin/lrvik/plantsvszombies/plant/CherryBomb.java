@@ -44,7 +44,7 @@ public class CherryBomb extends Plant {
                     "plant/CherryBomb/boom/Frame%02d.png", i)).displayedFrame();
             frames.add(ccSpriteFrame);
         }
-        CCAnimation ccAnimation = CCAnimation.animationWithFrames(frames, 0.13f);
+        CCAnimation ccAnimation = CCAnimation.animationWithFrames(frames, 0.1f);
         CCAnimate ccAnimate = CCAnimate.action(ccAnimation, false);
         //runAction(ccAnimate);
 

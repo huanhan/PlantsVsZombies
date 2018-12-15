@@ -62,7 +62,7 @@ public class ShopLayer extends CCLayer {
 
         ccLabel_tip = CCLabel.makeLabel("购买成功", "", 40);
         ccLabel_tip.setColor(ccColor3B.ccRED);
-        ccLabel_tip.setPosition(winSize.getWidth() / 2, winSize.getHeight()-80);
+        ccLabel_tip.setPosition(winSize.getWidth() / 2, winSize.getHeight() - 80);
         addChild(ccLabel_tip);
         ccLabel_tip.setVisible(false);
 
@@ -73,8 +73,16 @@ public class ShopLayer extends CCLayer {
     @Override
     public boolean ccTouchesBegan(MotionEvent event) {
         if (CGRect.containsPoint(ccSprite_lawnmower.getBoundingBox(), convertTouchToNodeSpace(event))) {
-            // todo 点击了除草机
-            showText("购买成功");
+            int zs = (int) SPUtils.get(CCDirector.sharedDirector().getActivity(), "zs", 0);
+            boolean lm = (boolean) SPUtils.get(CCDirector.sharedDirector().getActivity(), "lm", false);
+            if (!lm && zs > 10) {
+                zs -= 10;
+                SPUtils.put(CCDirector.sharedDirector().getActivity(), "zs", zs);
+                SPUtils.put(CCDirector.sharedDirector().getActivity(), "lm", true);
+                showText("购买成功");
+            } else {
+                showText("购买失败,钻石不足或已购买该道具！");
+            }
         } else if (CGRect.containsPoint(ccSprite_store_p.getBoundingBox(), convertTouchToNodeSpace(event))) {
             // todo 点击了返回
             CCScene ccScene = CCScene.node();
@@ -90,7 +98,7 @@ public class ShopLayer extends CCLayer {
         ccLabel_tip.setVisible(true);
         ccLabel_tip.setString(text);
 
-        CCDelayTime ccDelayTime = CCDelayTime.action(1);
+        CCDelayTime ccDelayTime = CCDelayTime.action(2);
         CCCallFunc ccCallFunc = CCCallFunc.action(this, "hide");
         CCSequence ccSequence = CCSequence.actions(ccDelayTime, ccCallFunc);
         runAction(ccSequence);

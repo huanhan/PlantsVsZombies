@@ -1,5 +1,7 @@
 package xin.lrvik.plantsvszombies;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.MotionEvent;
 
@@ -168,7 +170,8 @@ public class CombatLayer extends CCLayer {
                 ccSprite_tipbg2.getPosition().y));
         addChild(ccSprite_diamond);
 
-        ccLabel_diamond = CCLabel.makeLabel("0", "", 20);
+        diamondsNum = (int) SPUtils.get(CCDirector.sharedDirector().getActivity(), "zs", 0);
+        ccLabel_diamond = CCLabel.makeLabel(diamondsNum + "", "", 20);
         ccLabel_diamond.setColor(ccColor3B.ccGREEN);
         ccLabel_diamond.setPosition(ccSprite_diamond.getPosition().x + 50, ccSprite_diamond.getPosition().y);
         addChild(ccLabel_diamond);
@@ -501,9 +504,15 @@ public class CombatLayer extends CCLayer {
         //创建每层的空位
         combatLines = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
-            LawnMower lawnMower = new LawnMower(cgPoints_path.get(2 * i + 1), cgPoints_path.get(2 * i));
-            cctmxTiledMap.addChild(lawnMower, 5 - i);
-            combatLines.add(new CombatLine(lawnMower));
+            boolean lm = (boolean) SPUtils.get(CCDirector.sharedDirector().getActivity(), "lm", false);
+            if (lm) {
+                LawnMower lawnMower = new LawnMower(cgPoints_path.get(2 * i + 1), cgPoints_path.get(2 * i));
+                cctmxTiledMap.addChild(lawnMower, 5 - i);
+                combatLines.add(new CombatLine(lawnMower));
+            } else {
+                combatLines.add(new CombatLine());
+            }
+
         }
 
         random = new Random();
@@ -682,7 +691,7 @@ public class CombatLayer extends CCLayer {
     public void end(Object node, Object row) {
         Log.d(TAG, "row: " + row);
         LawnMower lawnMower = combatLines.get((Integer) row).getLawnMower();
-        if (lawnMower.getState()== LawnMower.State.WAIT) {
+        if (lawnMower != null && lawnMower.getState() == LawnMower.State.WAIT) {
             lawnMower.move();
         } else {
             setIsTouchEnabled(false);
@@ -752,6 +761,7 @@ public class CombatLayer extends CCLayer {
         diamondsNum++;
         ccLabel_diamond.setString(diamondsNum + "");
         diamond = null;
+        SPUtils.put(CCDirector.sharedDirector().getActivity(), "zs", diamondsNum);
     }
 
     public ArrayList<CombatLine> getCombatLines() {

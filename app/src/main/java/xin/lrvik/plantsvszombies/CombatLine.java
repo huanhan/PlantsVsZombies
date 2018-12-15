@@ -54,6 +54,21 @@ public class CombatLine {
         random = new Random();
     }
 
+    public CombatLine() {
+        plants = new SparseArray<>();
+        zombies = new ArrayList<>();
+        shooterPlants = new ArrayList<>();
+        chomperPlants = new ArrayList<>();
+        potatoMinePlants = new ArrayList<>();
+        CCScheduler.sharedScheduler().schedule("attackPlant", this, 1, false);
+        CCScheduler.sharedScheduler().schedule("attackZombie", this, 1, false);
+        CCScheduler.sharedScheduler().schedule("bulletHurtCompute", this, 0.2f, false);
+        CCScheduler.sharedScheduler().schedule("chomperHurt", this, 0.2f, false);
+        CCScheduler.sharedScheduler().schedule("potatoMineHurt", this, 0.2f, false);
+        CCScheduler.sharedScheduler().schedule("lawnMowerHurt", this, 0.2f, false);
+        random = new Random();
+    }
+
     public void addPlant(int col, Plant plant) {
         plants.put(col, plant);
         if (plant instanceof ShooterPlant) {
@@ -216,7 +231,7 @@ public class CombatLine {
     }
 
     public void lawnMowerHurt(float t) {
-        if (lawnMower.getState()!=LawnMower.State.END) {
+        if (lawnMower != null && lawnMower.getState() != LawnMower.State.END) {
             for (Zombie zombie : zombies) {
                 float dis = zombie.getPosition().x - lawnMower.getPosition().x;
                 if (dis < 0) {
