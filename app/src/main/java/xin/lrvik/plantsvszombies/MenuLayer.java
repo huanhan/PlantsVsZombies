@@ -27,6 +27,8 @@ class MenuLayer extends CCLayer {
 
         //创建菜单
         CCMenu ccMenu = CCMenu.menu();
+
+        //开始冒险
         //菜单默认未按下
         CCSprite ccSprite_start_adventure_default = CCSprite.sprite("menu/start_adventure_default.png");
         //菜单按下
@@ -39,27 +41,52 @@ class MenuLayer extends CCLayer {
         ccMenuItemSprite.setPosition(270, 160);
         //增加进菜单
         ccMenu.addChild(ccMenuItemSprite);
+
+        //商店
+        //菜单默认未按下
+        CCSprite ccSprite_shop = CCSprite.sprite("other/shop.png");
+        //菜单按下
+        CCSprite ccSprite_shop_press = CCSprite.sprite("other/shop_press.png");
+        //创建菜单子项精灵
+        CCMenuItemSprite ccMenuItemSprite2 = CCMenuItemSprite.item(ccSprite_shop,
+                ccSprite_shop_press, this, "shop");
+        ccMenuItemSprite2.setScale(1.5f);
+        //设置菜单子项位置
+        ccMenuItemSprite2.setPosition(60, -180);
+        //增加进菜单
+        ccMenu.addChild(ccMenuItemSprite2);
+
         //将菜单增加进图层
         addChild(ccMenu);
 
         winSize = CCDirector.sharedDirector().winSize();
         setIsTouchEnabled(true);
+
+    }
+
+    public void start(Object item) {
+        CCScene ccScene = CCScene.node();
+        ccScene.addChild(new CombatLayer());
+        CCFadeTransition ccFadeTransition = CCFadeTransition.transition(2, ccScene);
+        CCDirector.sharedDirector().runWithScene(ccFadeTransition);
+    }
+
+    public void shop(Object item) {
+        CCScene ccScene = CCScene.node();
+        ccScene.addChild(new ShopLayer());
+        CCFadeTransition ccFadeTransition = CCFadeTransition.transition(2, ccScene);
+        CCDirector.sharedDirector().runWithScene(ccFadeTransition);
     }
 
     @Override
     public boolean ccTouchesBegan(MotionEvent event) {
         CGRect cgRect = CGRect.make(winSize.width - 130, 80, 100, 100);
-        if (CGRect.containsPoint(cgRect,convertTouchToNodeSpace(event))) {
+        if (CGRect.containsPoint(cgRect, convertTouchToNodeSpace(event))) {
             //点击了退出
             CCDirector.sharedDirector().getActivity().finish();
         }
         return super.ccTouchesBegan(event);
     }
 
-    public void start(Object item){
-        CCScene ccScene = CCScene.node();
-        ccScene.addChild(new CombatLayer());
-        CCFadeTransition ccFadeTransition = CCFadeTransition.transition(2, ccScene);
-        CCDirector.sharedDirector().runWithScene(ccFadeTransition);
-    }
+
 }
