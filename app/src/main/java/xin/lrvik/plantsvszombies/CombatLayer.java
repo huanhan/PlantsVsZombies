@@ -154,7 +154,7 @@ public class CombatLayer extends CCLayer {
         ccSprite_tipbg.setPosition(winSize.getWidth() - ccSprite_tipbg.getBoundingBox().size.getWidth() / 2 - 30,
                 winSize.getHeight() - ccSprite_tipbg.getBoundingBox().size.getHeight() / 2 - 30);
         addChild(ccSprite_tipbg);
-        ccLabel_pause = CCLabel.makeLabel("暂停", "", 30);
+        ccLabel_pause = CCLabel.makeLabel("菜单", "", 30);
         ccLabel_pause.setColor(ccColor3B.ccGREEN);
         ccLabel_pause.setPosition(ccSprite_tipbg.getPosition());
         addChild(ccLabel_pause);
@@ -239,13 +239,17 @@ public class CombatLayer extends CCLayer {
         CGPoint cgPoint = convertTouchToNodeSpace(event);
 
         if (CGRect.containsPoint(ccSprite_tipbg.getBoundingBox(), cgPoint)) {
-            if (CCDirector.sharedDirector().getIsPaused()) {
+            /*if (CCDirector.sharedDirector().getIsPaused()) {
                 CCDirector.sharedDirector().resume();
                 ccLabel_pause.setString("暂停");
             } else {
                 CCDirector.sharedDirector().pause();
                 ccLabel_pause.setString("开始");
-            }
+            }*/
+            CCScene ccScene = CCScene.node();
+            ccScene.addChild(new PauseLayer());
+            CCDirector.sharedDirector().pushScene(ccScene);
+
         }
 
         //判断是否开始游戏

@@ -27,6 +27,10 @@ public class ShopLayer extends CCLayer {
     private final CCSprite ccSprite_store_n;
     private final CCSprite ccSprite_lawnmower;
     private final CCLabel ccLabel_tip;
+    private int diamondsNum;
+    private CCSprite ccSprite_diamond;
+    private CCSprite ccSprite_tipbg2;
+    private CCLabel ccLabel_diamond;
 
     public ShopLayer() {
         CGSize winSize = CCDirector.sharedDirector().getWinSize();
@@ -62,9 +66,27 @@ public class ShopLayer extends CCLayer {
 
         ccLabel_tip = CCLabel.makeLabel("购买成功", "", 40);
         ccLabel_tip.setColor(ccColor3B.ccRED);
-        ccLabel_tip.setPosition(winSize.getWidth() / 2, winSize.getHeight() - 80);
+        ccLabel_tip.setPosition(winSize.getWidth() / 2, winSize.getHeight() - 140);
         addChild(ccLabel_tip);
         ccLabel_tip.setVisible(false);
+
+
+        ccSprite_tipbg2 = CCSprite.sprite("other/tipbg.png");
+        ccSprite_tipbg2.setPosition(winSize.getWidth() / 7 * 5 - ccSprite_tipbg2.getBoundingBox().size.getWidth() / 2 + 200,
+                winSize.getHeight() - ccSprite_tipbg2.getBoundingBox().size.getHeight() / 2 - 30);
+        addChild(ccSprite_tipbg2);
+        ccSprite_diamond = CCSprite.sprite("other/diamond.png");
+        //ccSprite_diamond.setContentSize(4,4);
+        ccSprite_diamond.setScale(0.5);
+        ccSprite_diamond.setPosition(ccp(ccSprite_tipbg2.getPosition().x - 30,
+                ccSprite_tipbg2.getPosition().y));
+        addChild(ccSprite_diamond);
+
+        diamondsNum = (int) SPUtils.get(CCDirector.sharedDirector().getActivity(), "zs", 0);
+        ccLabel_diamond = CCLabel.makeLabel(diamondsNum + "", "", 20);
+        ccLabel_diamond.setColor(ccColor3B.ccGREEN);
+        ccLabel_diamond.setPosition(ccSprite_diamond.getPosition().x + 50, ccSprite_diamond.getPosition().y);
+        addChild(ccLabel_diamond);
 
         setIsTouchEnabled(true);
     }
@@ -73,18 +95,17 @@ public class ShopLayer extends CCLayer {
     @Override
     public boolean ccTouchesBegan(MotionEvent event) {
         if (CGRect.containsPoint(ccSprite_lawnmower.getBoundingBox(), convertTouchToNodeSpace(event))) {
-            int zs = (int) SPUtils.get(CCDirector.sharedDirector().getActivity(), "zs", 0);
             boolean lm = (boolean) SPUtils.get(CCDirector.sharedDirector().getActivity(), "lm", false);
-            if (!lm && zs > 10) {
-                zs -= 10;
-                SPUtils.put(CCDirector.sharedDirector().getActivity(), "zs", zs);
+            if (!lm && diamondsNum > 10) {
+                diamondsNum -= 10;
+                ccLabel_diamond.setString(diamondsNum + "");
+                SPUtils.put(CCDirector.sharedDirector().getActivity(), "zs", diamondsNum);
                 SPUtils.put(CCDirector.sharedDirector().getActivity(), "lm", true);
                 showText("购买成功");
             } else {
                 showText("购买失败,钻石不足或已购买该道具！");
             }
         } else if (CGRect.containsPoint(ccSprite_store_p.getBoundingBox(), convertTouchToNodeSpace(event))) {
-            // todo 点击了返回
             CCScene ccScene = CCScene.node();
             ccScene.addChild(new MenuLayer());
             CCFadeTransition ccFadeTransition = CCFadeTransition.transition(2, ccScene);
