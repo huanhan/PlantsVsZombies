@@ -707,7 +707,7 @@ public class CombatLayer extends CCLayer {
     public void end(Object node, Object row) {
         Log.d(TAG, "row: " + row);
         LawnMower lawnMower = combatLines.get((Integer) row).getLawnMower();
-        if (lawnMower != null && lawnMower.getState() == LawnMower.State.WAIT) {
+        if (lawnMower != null && lawnMower.getState() != LawnMower.State.END) {
             SoundEngine.sharedEngine().playEffect(CCDirector.theApp, R.raw.lawnmower, false);
             lawnMower.move();
         } else {
