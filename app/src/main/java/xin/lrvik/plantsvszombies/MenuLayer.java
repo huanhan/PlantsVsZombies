@@ -8,6 +8,7 @@ import org.cocos2d.menus.CCMenu;
 import org.cocos2d.menus.CCMenuItemSprite;
 import org.cocos2d.nodes.CCDirector;
 import org.cocos2d.nodes.CCSprite;
+import org.cocos2d.sound.SoundEngine;
 import org.cocos2d.transitions.CCFadeTransition;
 import org.cocos2d.types.CGPoint;
 import org.cocos2d.types.CGRect;
@@ -19,8 +20,21 @@ import org.cocos2d.types.CGSize;
 class MenuLayer extends CCLayer {
 
     private final CGSize winSize;
+    private final SoundEngine engine;
 
     public MenuLayer() {
+        engine = SoundEngine.sharedEngine();
+        engine.preloadEffect(CCDirector.theApp,R.raw.chompsoft);
+        engine.preloadEffect(CCDirector.theApp,R.raw.explosion);
+        engine.preloadEffect(CCDirector.theApp,R.raw.lawnmower);
+        engine.preloadEffect(CCDirector.theApp,R.raw.losemusic);
+        engine.preloadEffect(CCDirector.theApp,R.raw.points);
+        engine.preloadEffect(CCDirector.theApp,R.raw.shoop);
+        engine.preloadEffect(CCDirector.theApp,R.raw.siren);
+        engine.preloadEffect(CCDirector.theApp,R.raw.win);
+        engine.preloadEffect(CCDirector.theApp,R.raw.groan4);
+        engine.playSound(CCDirector.theApp, R.raw.faster, true);
+
         CCSprite ccSprite_menu = CCSprite.sprite("menu/main_menu_bg.png");
         ccSprite_menu.setAnchorPoint(0, 0);
         addChild(ccSprite_menu);

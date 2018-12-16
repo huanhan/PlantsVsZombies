@@ -25,6 +25,7 @@ import org.cocos2d.nodes.CCLabel;
 import org.cocos2d.nodes.CCNode;
 import org.cocos2d.nodes.CCSprite;
 import org.cocos2d.nodes.CCSpriteFrame;
+import org.cocos2d.sound.SoundEngine;
 import org.cocos2d.transitions.CCFlipXTransition;
 import org.cocos2d.types.CGPoint;
 import org.cocos2d.types.CGRect;
@@ -89,6 +90,7 @@ public class CombatLayer extends CCLayer {
     private int diamondsNum;
     private Diamond diamond;
     private CCSprite ccSprite_shovel;
+    private SoundEngine engine;
 
 
     public CombatLayer() {
@@ -96,6 +98,9 @@ public class CombatLayer extends CCLayer {
     }
 
     private void loadMap() {
+
+        engine = SoundEngine.sharedEngine();
+
         ccSprites_show = new ArrayList<>();
 
         //加载地图文件
@@ -254,6 +259,7 @@ public class CombatLayer extends CCLayer {
 
         //判断是否开始游戏
         if (isStart) {
+
             if (CGRect.containsPoint(ccSprite_seedBank.getBoundingBox(), cgPoint)) {
                 //初始化选中
                 if (selectCard != null) {
@@ -353,12 +359,14 @@ public class CombatLayer extends CCLayer {
             } else {
                 for (Sun sun : suns) {
                     if (CGRect.containsPoint(sun.getBoundingBox(), cgPoint)) {
+                        engine.playEffect(CCDirector.theApp, R.raw.points, false);
                         sun.collect();
                     }
                 }
 
                 for (Diamond diamond : diamonds) {
                     if (CGRect.containsPoint(diamond.getBoundingBox(), cgPoint)) {
+                        engine.playEffect(CCDirector.theApp, R.raw.points, false);
                         diamond.collect(ccSprite_tipbg2.getPosition());
                     }
 
@@ -446,6 +454,8 @@ public class CombatLayer extends CCLayer {
     }
 
     public void startReady() {
+
+        engine.playSound(CCDirector.theApp, R.raw.watery, true);
         //将已经绘制好的僵尸移除，节省内存
         for (CCSprite ccSprite : ccSprites_show) {
             ccSprite.removeSelf();
@@ -562,6 +572,7 @@ public class CombatLayer extends CCLayer {
 
         //295
         if (killZombiesNum >= 295) {
+            SoundEngine.sharedEngine().playEffect(CCDirector.theApp, R.raw.win, false);
             CCLabel ccLabel2 = CCLabel.makeLabel("通关成功", "", 40);
             ccLabel2.setPosition(ccp(winSize.getWidth() / 2, winSize.getHeight() / 2));
             ccLabel2.setColor(ccColor3B.ccRED);
@@ -636,6 +647,7 @@ public class CombatLayer extends CCLayer {
 
     //根据数量增加僵尸
     private void addZombiesByNum(int num, float delay) {
+        engine.playEffect(CCDirector.theApp, R.raw.siren, false);
         //CCScheduler.sharedScheduler().schedule("addZombie", this, 20, false);
         CCFiniteTimeAction[] cCFiniteTimeActions = new CCFiniteTimeAction[num * 2];
         for (int i = 0; i < num * 2; i += 2) {
@@ -696,6 +708,7 @@ public class CombatLayer extends CCLayer {
         Log.d(TAG, "row: " + row);
         LawnMower lawnMower = combatLines.get((Integer) row).getLawnMower();
         if (lawnMower != null && lawnMower.getState() == LawnMower.State.WAIT) {
+            SoundEngine.sharedEngine().playEffect(CCDirector.theApp, R.raw.lawnmower, false);
             lawnMower.move();
         } else {
             setIsTouchEnabled(false);
@@ -708,7 +721,7 @@ public class CombatLayer extends CCLayer {
                 ccNode.stopAllActions();
                 ccNode.unscheduleAllSelectors();
             }
-
+            SoundEngine.sharedEngine().playEffect(CCDirector.theApp, R.raw.losemusic, false);
             CCSprite ccSprite_ZombiesWon = CCSprite.sprite("zombieswon/ZombiesWon.png");
             ccSprite_ZombiesWon.setPosition(winSize.getWidth() / 2, winSize.getHeight() / 2);
             addChild(ccSprite_ZombiesWon);
@@ -771,4 +784,6 @@ public class CombatLayer extends CCLayer {
     public ArrayList<CombatLine> getCombatLines() {
         return combatLines;
     }
+
+
 }

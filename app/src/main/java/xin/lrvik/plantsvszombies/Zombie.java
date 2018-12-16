@@ -11,8 +11,10 @@ import org.cocos2d.actions.interval.CCMoveTo;
 import org.cocos2d.actions.interval.CCSequence;
 import org.cocos2d.actions.interval.CCTintTo;
 import org.cocos2d.nodes.CCAnimation;
+import org.cocos2d.nodes.CCDirector;
 import org.cocos2d.nodes.CCSprite;
 import org.cocos2d.nodes.CCSpriteFrame;
+import org.cocos2d.sound.SoundEngine;
 import org.cocos2d.types.CGPoint;
 import org.cocos2d.types.util.CGPointUtil;
 
@@ -127,6 +129,7 @@ public class Zombie extends CCSprite {
         this.combatLayer = combatLayer;
         this.end = end;
         this.row = row;
+        SoundEngine.sharedEngine().playEffect(CCDirector.theApp, R.raw.groan4, false);
         move();
     }
 

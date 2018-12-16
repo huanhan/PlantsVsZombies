@@ -7,8 +7,10 @@ import org.cocos2d.actions.interval.CCAnimate;
 import org.cocos2d.actions.interval.CCDelayTime;
 import org.cocos2d.actions.interval.CCSequence;
 import org.cocos2d.nodes.CCAnimation;
+import org.cocos2d.nodes.CCDirector;
 import org.cocos2d.nodes.CCSprite;
 import org.cocos2d.nodes.CCSpriteFrame;
+import org.cocos2d.sound.SoundEngine;
 import org.cocos2d.types.util.CGPointUtil;
 
 import java.util.ArrayList;
@@ -18,6 +20,7 @@ import java.util.Locale;
 import xin.lrvik.plantsvszombies.CombatLayer;
 import xin.lrvik.plantsvszombies.CombatLine;
 import xin.lrvik.plantsvszombies.Plant;
+import xin.lrvik.plantsvszombies.R;
 import xin.lrvik.plantsvszombies.Zombie;
 
 /**
@@ -60,6 +63,7 @@ public class PotatoMine extends Plant {
     }
 
     public void boom() {
+        SoundEngine.sharedEngine().playEffect(CCDirector.theApp, R.raw.explosion, false);
         isBoom = true;
         stopAllActions();
         ArrayList<CCSpriteFrame> frames = new ArrayList<>();

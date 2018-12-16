@@ -3,8 +3,10 @@ package xin.lrvik.plantsvszombies;
 import org.cocos2d.actions.base.CCRepeatForever;
 import org.cocos2d.actions.interval.CCAnimate;
 import org.cocos2d.nodes.CCAnimation;
+import org.cocos2d.nodes.CCDirector;
 import org.cocos2d.nodes.CCSprite;
 import org.cocos2d.nodes.CCSpriteFrame;
+import org.cocos2d.sound.SoundEngine;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -41,6 +43,7 @@ public abstract class Plant extends CCSprite {
     }
 
     public void hurtCompute(int hurt){
+        SoundEngine.sharedEngine().playEffect(CCDirector.theApp, R.raw.chompsoft, false);
         HP-=hurt;
         if(HP<0){
             HP=0;

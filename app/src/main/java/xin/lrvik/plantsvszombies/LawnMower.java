@@ -13,7 +13,7 @@ import org.cocos2d.types.util.CGPointUtil;
  */
 public class LawnMower extends CCSprite {
 
-    private float speed = 170;
+    private float speed = 340;
     private final CGPoint end;
     private State state = State.WAIT;
 

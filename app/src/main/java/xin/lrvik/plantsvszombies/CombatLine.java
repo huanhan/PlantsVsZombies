@@ -65,7 +65,7 @@ public class CombatLine {
         CCScheduler.sharedScheduler().schedule("bulletHurtCompute", this, 0.2f, false);
         CCScheduler.sharedScheduler().schedule("chomperHurt", this, 0.2f, false);
         CCScheduler.sharedScheduler().schedule("potatoMineHurt", this, 0.2f, false);
-        CCScheduler.sharedScheduler().schedule("lawnMowerHurt", this, 0.2f, false);
+        CCScheduler.sharedScheduler().schedule("lawnMowerHurt", this, 0.1f, false);
         random = new Random();
     }
 
@@ -84,6 +84,13 @@ public class CombatLine {
 
     public void removePlant(int col) {
         Plant plant = plants.get(col);
+        for (Zombie zombie : zombies) {
+            int zombiescol = (int) (zombie.getPosition().x - 280) / 105;
+            if (col == zombiescol && zombie.getState() == Zombie.State.ATTACK) {
+                zombie.move();
+            }
+        }
+
         plants.remove(col);
         if (plant instanceof ShooterPlant) {
             shooterPlants.remove(plant);

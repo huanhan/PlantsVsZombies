@@ -3,10 +3,13 @@ package xin.lrvik.plantsvszombies.bullet;
 import org.cocos2d.actions.instant.CCCallFunc;
 import org.cocos2d.actions.interval.CCMoveTo;
 import org.cocos2d.actions.interval.CCSequence;
+import org.cocos2d.nodes.CCDirector;
 import org.cocos2d.nodes.CCSprite;
+import org.cocos2d.sound.SoundEngine;
 import org.cocos2d.types.CGPoint;
 import org.cocos2d.types.util.CGPointUtil;
 
+import xin.lrvik.plantsvszombies.R;
 import xin.lrvik.plantsvszombies.Zombie;
 import xin.lrvik.plantsvszombies.plant.ShooterPlant;
 
@@ -24,6 +27,7 @@ public abstract class Bullet extends CCSprite {
     public Bullet(String filepath, ShooterPlant shooterPlant) {
         super(filepath);
         this.shooterPlant = shooterPlant;
+        SoundEngine.sharedEngine().playEffect(CCDirector.theApp, R.raw.shoop, false);
         setPosition(shooterPlant.getPosition().x + 20, shooterPlant.getPosition().y + 50);
         shooterPlant.getParent().addChild(this, 6);
         shooterPlant.getBullets().add(this);
