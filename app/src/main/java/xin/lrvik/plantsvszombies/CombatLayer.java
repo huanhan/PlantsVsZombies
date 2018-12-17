@@ -711,6 +711,7 @@ public class CombatLayer extends CCLayer {
             SoundEngine.sharedEngine().playEffect(CCDirector.theApp, R.raw.lawnmower, false);
             lawnMower.move();
         } else {
+
             setIsTouchEnabled(false);
             //CCScheduler.sharedScheduler().unschedule("addZombie", this);
             for (CCNode ccNode : cctmxTiledMap.getChildren()) {
@@ -721,7 +722,7 @@ public class CombatLayer extends CCLayer {
                 ccNode.stopAllActions();
                 ccNode.unscheduleAllSelectors();
             }
-            SoundEngine.sharedEngine().playEffect(CCDirector.theApp, R.raw.losemusic, false);
+            engine.playEffect(CCDirector.theApp, R.raw.losemusic, false);
             CCSprite ccSprite_ZombiesWon = CCSprite.sprite("zombieswon/ZombiesWon.png");
             ccSprite_ZombiesWon.setPosition(winSize.getWidth() / 2, winSize.getHeight() / 2);
             addChild(ccSprite_ZombiesWon);
@@ -737,6 +738,7 @@ public class CombatLayer extends CCLayer {
         ccScene.addChild(new MenuLayer());
         CCFlipXTransition ccFlipXTransition = CCFlipXTransition.transition(2, ccScene, 1);
         CCDirector.sharedDirector().replaceScene(ccFlipXTransition);
+        engine.realesAllEffects();
     }
 
     public void addSun(Sun sun) {
