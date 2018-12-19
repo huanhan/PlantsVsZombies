@@ -7,6 +7,7 @@ import org.cocos2d.layers.CCScene;
 import org.cocos2d.nodes.CCDirector;
 import org.cocos2d.nodes.CCLabel;
 import org.cocos2d.nodes.CCSprite;
+import org.cocos2d.sound.SoundEngine;
 import org.cocos2d.transitions.CCFadeTransition;
 import org.cocos2d.types.CGRect;
 import org.cocos2d.types.CGSize;
@@ -63,8 +64,10 @@ public class PauseLayer extends CCLayer {
     @Override
     public boolean ccTouchesBegan(MotionEvent event) {
         if (CGRect.containsPoint(ccSprite_button1.getBoundingBox(), convertTouchToNodeSpace(event))) {
+            SoundEngine.sharedEngine().resumeSound();
             CCDirector.sharedDirector().popScene();
         } else if (CGRect.containsPoint(ccSprite_button11.getBoundingBox(), convertTouchToNodeSpace(event))) {
+            SoundEngine.sharedEngine().playSound(CCDirector.theApp, R.raw.faster, true);
             CCScene ccScene = CCScene.node();
             ccScene.addChild(new CombatLayer());
             CCFadeTransition ccFadeTransition = CCFadeTransition.transition(2, ccScene);
@@ -77,7 +80,6 @@ public class PauseLayer extends CCLayer {
         } else {
 
         }
-
         return super.ccTouchesBegan(event);
     }
 }

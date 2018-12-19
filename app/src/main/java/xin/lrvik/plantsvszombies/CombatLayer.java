@@ -251,6 +251,7 @@ public class CombatLayer extends CCLayer {
                 CCDirector.sharedDirector().pause();
                 ccLabel_pause.setString("开始");
             }*/
+            engine.pauseSound();
             CCScene ccScene = CCScene.node();
             ccScene.addChild(new PauseLayer());
             CCDirector.sharedDirector().pushScene(ccScene);
@@ -555,6 +556,7 @@ public class CombatLayer extends CCLayer {
         addChild(ccLabel1ZombiesBatch);
 
         ccLabel1 = CCLabel.makeLabel("击杀0", "", 25);
+        ccLabel1.setVisible(false);
         ccLabel1.setPosition(ccp(winSize.getWidth() - 250, winSize.getHeight() - 50));
         ccLabel1.setColor(ccColor3B.ccRED);
         addChild(ccLabel1);
